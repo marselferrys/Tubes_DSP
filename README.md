@@ -21,10 +21,8 @@ Program ini merupakan sistem yang digunakan untuk menangkap sinyal remote Photop
 
 ## **Fitur**
 
-1. Menampilkan hasil pembacaan sinyal rPPG dan denyut jantung per menit
-2. Menampilkan hasil pembacaan sinyal Respiration
-3. Hasil pembacaan dari kedua sinyal akan tersimpan di folder project dalam bentuk gambar
-
+1. Menampilkan visualisasi hasil pembacaan sinyal rPPG dan denyut jantung per menit
+2. Menampilkan visualisasi hasil pembacaan sinyal Respiration
 ---
 
 ## **Instuksi Instalasi**
