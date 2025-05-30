@@ -1,6 +1,6 @@
 <div align="center">
    
-# **IF3024 Realtime rPPG and Respiration Signal Reader**
+# **IF3024 Realtime rPPG and Respiration Signal **
 
 # Tugas Besar Mata Kuliah Pengolahan Sinyal Digital (IF3024)
 
@@ -30,12 +30,12 @@ Program ini merupakan sistem yang digunakan untuk menangkap sinyal remote Photop
 
 ## **Instuksi Instalasi**
 
-1. Siapkan code editor pilihan (kami menggunakan VSCode)
-2. install python (kami menggunakan versi 3.10.16)
-3. clone repositori
+1. Siapkan code editor pilihan
+2. install python (versi 3.10.16)
+3. buat folder projek dan clone repositori
    ```bash
+   cd projek
    git clone https://github.com/marselferrys/Tubes_DSP.git
-   cd IF3024_realtime_signal_reader
    ```
 4. install file dependency
    ```
