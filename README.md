@@ -1,3 +1,5 @@
+<img src="Realtime rPPG and Respiration Signal.png" width="100%" />
+
 <div align="center">
    
 # **Realtime rPPG and Respiration Signal**
