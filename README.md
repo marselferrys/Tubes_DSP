@@ -33,8 +33,8 @@ Program ini merupakan sistem yang digunakan untuk menangkap sinyal remote Photop
 2. install python (versi 3.10.16)
 3. buat folder projek dan clone repositori
    ```bash
-   cd projek
    git clone https://github.com/marselferrys/Tubes_DSP.git
+   cd Tubes_DSP
    ```
 4. install file dependency
    ```
