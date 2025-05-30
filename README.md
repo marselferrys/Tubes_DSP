@@ -1,7 +1,6 @@
 <div align="center">
    
-# **IF3024 Realtime rPPG and Respiration Signal **
-
+# **IF3024 Realtime rPPG and Respiration Signal**
 # Tugas Besar Mata Kuliah Pengolahan Sinyal Digital (IF3024)
 
 ### Dosen Pengampu: **Martin C.T Manullang, S.T., M.T., PhD.**
