@@ -81,4 +81,4 @@ Berikut adalah teknologi dan alat yang digunakan dalam proyek ini:
 | :---: | :---: | :---: | :---: |
 | Week 1 | - Create repository <br> - understand, brainstrom, and learn how to build the final task  | Marchel  | Done |
 | Week 2 | - Develop resp.py, rppg.py, and main.py <br> - debugging the code error | Marchel & Arof | Done |
-| Week 3 | - Build the report and finalize the code <br> | Arof | Done |
+| Week 3 | - Build the report and finalize the code <br> | Arof & Marchel | Done |
