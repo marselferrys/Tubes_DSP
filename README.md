@@ -12,6 +12,8 @@
 | 1   | Marchel Ferry Timoteus S | 121140195 | marselferrys     |
 | 2   | Arof Andestama           | 121140182 | Arof182      |
 
+</div>
+
 ---
 
 ## **Deskripsi**
