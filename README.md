@@ -58,14 +58,14 @@ Berikut adalah teknologi dan alat yang digunakan dalam proyek ini:
 
 ## **Library yang dibutuhkan**
 
-| No. | Library      | Kegunaan dalam Program                                                                 |
-|-----|--------------|-----------------------------------------------------------------------------------------|
-| 1   | `opencv`     | Digunakan untuk menangkap video dari webcam, menampilkan video frame, dan manipulasi gambar (frame) secara real-time. Fungsi penting seperti `cv2.VideoCapture`, `cv2.imshow`, `cv2.cvtColor`, dan `cv2.putText` berasal dari sini. |
-| 2   | `numpy`      | Digunakan untuk pengolahan array numerik, menghitung rata-rata sinyal RGB dari ROI wajah, serta menyusun data sinyal untuk pemrosesan rPPG. |
-| 3   | `mediapipe`  | Digunakan untuk mendeteksi pose tubuh (bahu kiri dan kanan) untuk respirasi, dan deteksi wajah (bounding box) untuk mendapatkan ROI wajah untuk rPPG. |
-| 4   | `OpenCV`     | Sama seperti `opencv`, hanya disebut dengan nama lengkap. Ini adalah library yang sama (`cv2`), digunakan untuk akses webcam, manipulasi dan tampilan gambar/video. |
-| 5   | `matplotlib` | Digunakan untuk membuat grafik sinyal rPPG dan respirasi secara real-time yang kemudian disimpan sebagai gambar (`.png`) dan ditampilkan di bawah frame video. |
-| 6   | `scipy`      | Digunakan untuk pemrosesan sinyal, termasuk desain dan penerapan filter Butterworth (`scipy.signal.butter`, `scipy.signal.filtfilt`) serta deteksi puncak sinyal (`scipy.signal.find_peaks`). |
+| No. | Library | Kegunaan dalam Program |
+|:---:|:---|:---|
+| 1 | **`opencv`** | Berperan sebagai **sumber data visual utama**. Fungsinya untuk mengakuisisi *frame* video secara *real-time* dari webcam (`cv2.VideoCapture`). Selain itu, digunakan untuk pemrosesan gambar awal seperti mengubah ruang warna (`cv2.cvtColor`) dan menyesuaikan ukuran *frame* (`cv2.resize`) sebelum diolah lebih lanjut atau ditampilkan. |
+| 2 | **`numpy`** | Merupakan **fondasi untuk semua operasi data numerik**. Library ini digunakan untuk merepresentasikan *frame* gambar sebagai *array* multidimensi, melakukan kalkulasi matematis pada nilai piksel (seperti rata-rata RGB pada ROI), dan menyusun data deret waktu (sinyal) yang menjadi input bagi Matplotlib dan SciPy. |
+| 3 | **`mediapipe`** | Berfungsi sebagai **mesin deteksi cerdas berbasis *machine learning***. Dalam program ini, MediaPipe secara spesifik digunakan untuk dua tugas: 1) Mendeteksi *landmark* wajah untuk menentukan *Region of Interest* (ROI) pada dahi untuk analisis rPPG, dan 2) Mendeteksi *landmark* bahu untuk mengukur pergerakan periodik yang diasosiasikan dengan sinyal pernapasan. |
+| 4 | **`pygame`** | Bertindak sebagai **lapisan presentasi (GUI)** aplikasi. Fungsinya adalah untuk membuat jendela utama, menangani interaksi pengguna (seperti menekan tombol 'q' untuk keluar), dan yang terpenting, menggabungkan (*blit*) beberapa sumber visual yaitu *surface* dari *frame* video (OpenCV) dan *surface* dari gambar grafik (Matplotlib) menjadi satu tampilan yang koheren. |
+| 5 | **`matplotlib`** | Digunakan sebagai **mesin visualisasi data**. Secara spesifik, fungsinya untuk mengubah data sinyal rPPG dan respirasi menjadi plot atau grafik. Melalui modul `backend_agg`, grafik tersebut tidak ditampilkan di jendela baru, melainkan digambar ke *buffer* memori internal yang kemudian dikonversi menjadi *array* NumPy, sehingga bisa ditampilkan di dalam jendela Pygame. |
+| 6 | **`scipy`** | Merupakan *toolkit* utama untuk **pemrosesan sinyal digital (DSP)**. Library ini digunakan untuk membersihkan dan menganalisis sinyal mentah. Fungsi utamanya adalah mendesain dan menerapkan *filter* digital (seperti Butterworth *band-pass filter*) untuk mengisolasi frekuensi detak jantung, serta untuk mendeteksi puncak (*peaks*) pada sinyal rPPG yang telah difilter untuk menghitung *Heart Rate*. |
 
 ---
 
