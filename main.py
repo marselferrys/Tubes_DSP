@@ -69,7 +69,7 @@ def main():
 
     # Inisialisasi layar pygame
     screen = pygame.display.set_mode((window_width, window_height))
-    pygame.display.set_caption("Realtime rPPG and Respiration Signal")
+    pygame.display.set_caption("Realtime rPPG & Respiration Visualizer")
     font = pygame.font.SysFont(None, 24)
 
     # Variabel sinyal
