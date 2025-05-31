@@ -4,29 +4,40 @@ import numpy as np
 import pygame
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg
+import os
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0" 
 
 from resp import get_resp
 from rppg import get_rppg, get_rgb_roi
 
+
 # Fungsi untuk membuat chart dan mengembalikannya dalam bentuk numpy array 
 def create_realtime_chart(respiration, rppg, peaks, heart_rate):
-    fig, ax = plt.subplots(2, 1, figsize=(6, 4))
-    ax[0].set_title(f'Heart Rate: {heart_rate:.0f}')
-    ax[0].plot(rppg, color='black')
-    ax[0].plot(peaks, [rppg[i] for i in peaks], 'x', color='red')
+    """Membuat plot untuk detak jantung dan pernapasan."""
+    fig, ax = plt.subplots(2, 1, figsize=(6, 4), facecolor='#DDDDDD') #
+    # Plot Detak Jantung (rPPG)
+    ax[0].set_title(f'Heart Rate: {heart_rate:.0f} BPM')
+    ax[0].plot(rppg, color='red', label='rPPG Signal')
+    ax[0].plot(peaks, [rppg[i] for i in peaks], 'x', color='blue', label='Peaks')
+    ax[0].set_ylabel('Intensitas Piksel')
+    ax[0].legend(loc='upper right')
+    
+    # Plot Pernapasan
     ax[1].set_title('Respiration Signal')
-    ax[1].plot(respiration, color='black')
-    plt.subplots_adjust(hspace=0.5)
+    ax[1].plot(respiration, color='green', label='Respiration Signal')
+    ax[1].set_xlabel('Sampel Waktu')
+    ax[1].set_ylabel('Pergerakan')
+    ax[1].legend(loc='upper right')
 
-    # Gunakan FigureCanvasAgg
+    plt.subplots_adjust(hspace=0.6)
+
     canvas = FigureCanvasAgg(fig)
     canvas.draw()
-
-    # Ambil buffer RGBA dan ubah ke RGB
+    
     width, height = canvas.get_width_height()
     buf = np.frombuffer(canvas.buffer_rgba(), dtype=np.uint8).reshape(height, width, 4)
-    chart_img = buf[:, :, :3].copy()  # Ambil hanya RGB, buang alpha
-
+    chart_img = buf[:, :, :3].copy()
+    
     plt.close(fig)
     return chart_img
 
@@ -37,18 +48,16 @@ def main():
         print("Gagal membuka webcam.")
         return
 
-    # Ambil resolusi webcam
-    ret, frame = cap.read()
-    if not ret:
-        print("Gagal membaca frame.")
-        return
-    frame_height, frame_width = frame.shape[:2]
-    
-    # Dapatkan resolusi layar
+    # Inisialisasi pygame
     pygame.init()
-    info = pygame.display.Info()
-    screen_width = info.current_w
-    screen_height = info.current_h
+    try:
+        info = pygame.display.Info()
+        screen_width = info.current_w
+        screen_height = info.current_h
+    except pygame.error:
+        print("Tidak bisa mendapatkan info display. Menggunakan ukuran default.")
+        screen_width, screen_height = 1280, 720
+
 
     # Ukuran jendela (80% lebar, 90% tinggi)
     window_width = max(int(screen_width * 0.8), 800)
@@ -58,9 +67,9 @@ def main():
     webcam_area_height = window_height // 2
     chart_area_height = window_height - webcam_area_height
 
-    # Inisialisasi pygame
+    # Inisialisasi layar pygame
     screen = pygame.display.set_mode((window_width, window_height))
-    pygame.display.set_caption("rppg dan respirasi Realtime Chart")
+    pygame.display.set_caption("Realtime rPPG and Respiration Signal")
     font = pygame.font.SysFont(None, 24)
 
     # Variabel sinyal
@@ -76,48 +85,54 @@ def main():
         if not ret:
             break
 
-        # Deteksi ROI wajah
+        # Mengubah ukuran frame agar pas dengan area webcam yang sudah ditentukan
+        frame_resized = cv2.resize(frame, (window_width, webcam_area_height))
+
+        # Deteksi ROI wajah (menggunakan frame asli untuk akurasi)
         curr_r_signal, curr_g_signal, curr_b_signal = get_rgb_roi(frame)
-        if not curr_r_signal:
-            continue
+        if curr_r_signal:
+            r_signal.append(curr_r_signal)
+            g_signal.append(curr_g_signal)
+            b_signal.append(curr_b_signal)
 
-        r_signal.append(curr_r_signal)
-        g_signal.append(curr_g_signal)
-        b_signal.append(curr_b_signal)
-
-        # Ubah frame ke RGB dan rotate untuk pygame
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        frame_surface = pygame.surfarray.make_surface(np.rot90(frame_rgb))
+        # Ubah frame yang sudah di-resize ke RGB dan buat surface
+        frame_rgb = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2RGB)
+        
+        # Menggunakan swapaxes untuk konversi yang benar dari array NumPy ke Pygame
+        frame_surface = pygame.surfarray.make_surface(frame_rgb.swapaxes(0, 1))
 
         # Update chart jika cukup data dan sudah lewat interval
-        if len(r_signal) > 30 and time.time() - last_chart_update_time > chart_update_interval:
+        current_time = time.time()
+        if len(r_signal) > 30 and current_time - last_chart_update_time > chart_update_interval:
             curr_resp, curr_time = get_resp(frame, start_time)
             resp.append(curr_resp)
             timestamps.append(curr_time)
 
             rppg, heart_rate, rppg_peaks, _ = get_rppg(r_signal, g_signal, b_signal)
             chart_img = create_realtime_chart(resp, rppg, rppg_peaks, heart_rate)
-            chart_img = cv2.resize(chart_img, (window_width, webcam_area_height))
-            chart_img = cv2.cvtColor(chart_img, cv2.COLOR_RGB2BGR)
-            chart_img = cv2.cvtColor(chart_img, cv2.COLOR_BGR2RGB)
-            chart_surface = pygame.surfarray.make_surface(np.rot90(chart_img))
-            last_chart_update_time = time.time()
+            
+            # Resize gambar chart sesuai dengan areanya
+            chart_img_resized = cv2.resize(chart_img, (window_width, chart_area_height))
+            
+            # --- PERUBAHAN 3: KOREKSI ORIENTASI GRAFIK & KODE LEBIH BERSIH ---
+            # Tidak ada lagi konversi warna bolak-balik yang tidak perlu
+            # Menggunakan swapaxes agar orientasi grafik benar
+            chart_surface = pygame.surfarray.make_surface(chart_img_resized.swapaxes(0, 1))
+            last_chart_update_time = current_time
 
-        # Gambar ke layar pygame
+        # Gambar semua elemen ke layar pygame
         screen.fill((0, 0, 0))
         screen.blit(frame_surface, (0, 0))
         if chart_surface:
             screen.blit(chart_surface, (0, webcam_area_height))
-
-        pygame.display.flip()
         
         # Tampilkan tulisan instruksi
-        text_surface = font.render("Tekan 'q' untuk keluar", True, (255, 255, 255))
+        text_surface = font.render("Tekan 'q' atau tutup jendela untuk keluar", True, (255, 255, 255))
         screen.blit(text_surface, (10, 10))
 
         pygame.display.update()
 
-        # Event handling
+        # Event handling untuk keluar dari program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
