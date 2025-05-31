@@ -71,6 +71,7 @@ Berikut adalah teknologi dan alat yang digunakan dalam proyek ini:
 
 ## **Dokumentasi Hasil**
 
+<img src="demo.png" width="100%" />
 
 ---
 
